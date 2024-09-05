@@ -1,0 +1,22 @@
+{
+  "name": "forte-image-script",
+  "version": "1.0.0",
+  "description": "Script to update older images",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.637.0",
+    "@types/node": "^22.1.0",
+    "aws-sdk": "^2.1687.0",
+    "axios": "^1.7.5",
+    "dotenv": "^16.4.5",
+    "jimp": "^0.22.12"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
