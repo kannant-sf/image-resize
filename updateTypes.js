@@ -1,6 +1,5 @@
 const { getTypes } = require("./services");
-const { processImage } = require("./utils");
-
+const { processImage, logError, logSuccess } = require("./utils");
 
 const updateTypes = async (url, tenantIdentifier) => {
   try {
@@ -39,14 +38,18 @@ const updateTypes = async (url, tenantIdentifier) => {
       results.forEach((result, index) => {
         if (result.status === "fulfilled") {
           if (result.value.success) {
-            console.log(
-              `Image ${result.value.imageName} processed successfully.`
-            );
+            const successMsg = `Image ${result.value.imageName} processed successfully.`;
+            logSuccess(successMsg);
+            console.log(successMsg);
           } else {
-            console.log(`Image ${result.value.imageName} failed to process.`);
+            const errorMsg = `Image ${result.value.imageName} failed to process.`;
+            logError(errorMsg);
+            console.log(errorMsg);
           }
         } else {
-          console.error(`Image processing failed: ${result.reason}`);
+          const errorMsg = `Image processing failed: ${result.reason}`;
+          logError(errorMsg);
+          console.log(errorMsg);
         }
       });
     }
@@ -56,5 +59,5 @@ const updateTypes = async (url, tenantIdentifier) => {
 };
 
 module.exports = {
-    updateTypes
-}
+  updateTypes,
+};

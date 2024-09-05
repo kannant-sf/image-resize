@@ -22,24 +22,37 @@ const records = {
 
 const init = async () => {
   try {
-    const args = process.argv;
+    const args = process.argv.slice(2)[0];
     console.log({ args }, "Arguments");
+
+    if (!args) throw new Error(`No tenant Identifier passed`);
+    records.tenantIdentifier = args;
     const res = await login(records.loginUrl, records.tenantIdentifier);
 
     const token = res?.data?.data?.jwtToken?.accessToken;
     console.log({ token });
     setToken(token);
 
-    // await updateTypes(records.typeUrl, records.tenantIdentifier);
-    // await updateStudios(records.studioUrl, records.tenantIdentifier);
+    await updateTypes(records.typeUrl, records.tenantIdentifier);
+    await updateStudios(records.studioUrl, records.tenantIdentifier);
     await updateLiveorVodSessions(
       records.vodSessionsUrl,
       records.tenantIdentifier,
       "VOD",
       "thumbnail_image"
     );
-    // await updateLiveorVodSessions(records.liveSessionsUrl, records.tenantIdentifier, "LIVE", "thumbnail_image")
-    // await updateLiveorVodSessions(records.collectionsUrl, records.tenantIdentifier, "COLLECTIONS", "thumbnailImage")
+    await updateLiveorVodSessions(
+      records.liveSessionsUrl,
+      records.tenantIdentifier,
+      "LIVE",
+      "thumbnail_image"
+    );
+    await updateLiveorVodSessions(
+      records.collectionsUrl,
+      records.tenantIdentifier,
+      "COLLECTIONS",
+      "thumbnailImage"
+    );
   } catch (error) {
     console.error({ error });
   }

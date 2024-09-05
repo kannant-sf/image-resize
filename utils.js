@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const Jimp = require("jimp");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
@@ -5,6 +7,20 @@ const bucket = process.env.S3_BUCKET;
 const cloudFrontURL = process.env.CLOUDFRONT_URL;
 
 const client = new S3Client({ region: process.env.AWS_REGION });
+
+const successLogPath = path.join(__dirname, "success.log");
+const errorLogPath = path.join(__dirname, "error.log");
+
+const logSuccess = (message) => {
+  fs.appendFileSync(
+    successLogPath,
+    `${new Date().toISOString()} - ${message}\n`
+  );
+};
+
+const logError = (message) => {
+  fs.appendFileSync(errorLogPath, `${new Date().toISOString()} - ${message}\n`);
+};
 
 const processImage = async (thumbnailImage) => {
   const imageURL = `${cloudFrontURL}/${thumbnailImage}`;
@@ -33,11 +49,13 @@ const processImage = async (thumbnailImage) => {
 
   uploadResults.forEach((result, index) => {
     if (result.status === "fulfilled") {
-      console.log(`Image ${images[index].imageName} uploaded successfully.`);
+      const successMsg = `Image ${images[index].imageName} uploaded successfully.`;
+      logSuccess(successMsg);
+      console.log(successMsg);
     } else {
-      console.error(
-        `Image ${images[index].imageName} failed to upload: ${result.reason}`
-      );
+      const errorMsg = `Image ${images[index].imageName} failed to upload: ${result.reason}`;
+      logError(errorMsg);
+      console.error(errorMsg);
       uploadSuccess = false;
     }
   });
@@ -74,4 +92,4 @@ const uploadToS3 = async (image, imageName, imageFormat, bucket, key) => {
   return client.send(command);
 };
 
-module.exports = { processImage };
+module.exports = { processImage, logSuccess, logError };
